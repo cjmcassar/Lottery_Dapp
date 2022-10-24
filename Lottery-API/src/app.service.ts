@@ -143,7 +143,6 @@ export class AppService {
     .connect(this.accounts[Number(body.index)])
     .approve(this.lotteryContract.address, ethers.constants.MaxUint256);
   await allowTx.wait();
-  //const tx = await this.lotteryContract.connect(this.signer).betMany(body.amount);
   const tx = await this.lotteryContract.bet();
   const receipt = await tx.wait();
   console.log(`Bets placed (${receipt.transactionHash})\n`);
@@ -152,14 +151,12 @@ export class AppService {
   }
 
   async burnTokens(body: any) {
-    //TODO: connect to account index dynamically
     const allowTx = await this.token
       .connect(this.accounts[Number(body.index)])
       .approve(this.lotteryContract.address, ethers.constants.MaxUint256);
     const receiptAllow = await allowTx.wait();
     console.log(`Allowance confirmed (${receiptAllow.transactionHash})\n`);
     const tx = await this.lotteryContract
-      //.connect(this.accounts[Number(index)])
       .connect(this.accounts[Number(body.index)])
       .returnTokens(ethers.utils.parseEther(body.amount));
     const receipt = await tx.wait();
@@ -193,7 +190,6 @@ export class AppService {
   }
   
   async claimPrize(body:any) {
-    //TODO: dynamically pass amount to withdraw
     const tx = await this.lotteryContract 
       .connect(this.accounts[Number(body.index)])
       .prizeWithdraw(ethers.utils.parseEther(body.amount));
